@@ -114,21 +114,24 @@ document.addEventListener('DOMContentLoaded', renderProjects);
 // SCROLL REVEAL ANIMATIONS
 // =============================================
 
-const revealElements = document.querySelectorAll('section');
-
-const revealOnScroll = () => {
-    revealElements.forEach(element => {
-        const elementTop = element.getBoundingClientRect().top;
-        const windowHeight = window.innerHeight;
-
-        if (elementTop < windowHeight - 100) {
-            element.style.opacity = '1';
-        }
-    });
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: "0px 0px -50px 0px"
 };
 
-window.addEventListener('scroll', revealOnScroll);
-revealOnScroll();
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+            // Optional: stop observing once revealed
+            // observer.unobserve(entry.target);
+        }
+    });
+}, observerOptions);
+
+document.querySelectorAll('.reveal').forEach(element => {
+    observer.observe(element);
+});
 
 // =============================================
 // SMOOTH PAGE LOAD
@@ -137,3 +140,26 @@ revealOnScroll();
 window.addEventListener('load', () => {
     document.body.style.opacity = '1';
 });
+
+// =============================================
+// SCROLL TO TOP BUTTON
+// =============================================
+
+const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+
+if (scrollToTopBtn) {
+    window.addEventListener('scroll', () => {
+        if (window.pageYOffset > 300) {
+            scrollToTopBtn.classList.add('show');
+        } else {
+            scrollToTopBtn.classList.remove('show');
+        }
+    });
+
+    scrollToTopBtn.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+}
